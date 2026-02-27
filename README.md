@@ -22,6 +22,22 @@ It is designed for teams that already run agentic systems in production and want
 
 ---
 
+## Screenshots
+
+### New Run (YAML / Form)
+![New Run page](images/new_run.png)
+
+### Runs View
+![Run Detail page](images/runs.png)
+
+### Run Overview
+![New Run page](images/overview.png)
+
+### Extended Run Report
+![Run Detail page](images/plugin_view.png)
+
+---
+
 ## Quickstart
 
 ### 1) Install (dev / editable)
