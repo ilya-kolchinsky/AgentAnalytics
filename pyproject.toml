@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentanalytics"
+version = "0.1.0"
+description = "MLflow/OTel trace mining framework for agent analytics (FAQ detector PoC)."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "pyyaml>=6.0",
+  "numpy>=1.23",
+  "scikit-learn>=1.2",
+  "fastapi>=0.110",
+  "uvicorn[standard]>=0.27",
+]
+
+[project.optional-dependencies]
+mlflow = ["mlflow>=2.9"]
+hdbscan = ["hdbscan>=0.8.33"]
+embeddings = ["sentence-transformers>=2.2.2"]
+server = ["python-multipart>=0.0.9"]
+dev = ["ruff", "pytest"]
+hf = ["transformers>=4.37", "torch>=2.0", "huggingface-hub>=0.20"]
+
+[project.scripts]
+agentanalytics = "agentanalytics.cli.main:main"
+agentanalytics-server = "agentanalytics_server.main:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["agentanalytics*", "agentanalytics_server*"]
+exclude = ["tests*", "examples*", "artifacts*"]

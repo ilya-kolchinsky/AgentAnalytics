@@ -1,0 +1,82 @@
+mlflow:
+  tracking_uri: "http://localhost:5000"
+  experiment_id: "my_agent_deployment"
+  # Optional: some MLflow builds support a filter string for traces
+  # query: "attributes.status = 'ERROR'"
+
+timeframe:
+  last_n_days: 7
+  # last_n_traces: 1000
+
+output:
+  output_dir: "./artifacts"
+  overwrite: true
+
+# Optional: customize how semantic fields are extracted from trace/span attributes.
+# If your traces use different attribute keys, put them here.
+schema_bindings:
+  query_text_keys: ["query_text", "user.query_text", "input.query", "prompt"]
+  final_answer_keys: ["final_answer", "agent.final_answer", "output.text", "response"]
+  error_type_keys: ["error.type", "exception.type"]
+  error_message_keys: ["error.message", "exception.message"]
+  tool_name_keys: ["tool.name", "tool_name"]
+  tool_args_keys: ["tool.args", "tool.arguments", "tool_args"]
+  tool_result_keys: ["tool.result", "tool_output", "tool.response"]
+
+plugins:
+  - name: "faq_detector"
+    enabled: true
+    config:
+      top_k_clusters: 20
+      min_cluster_size: 15
+      min_samples: 5
+      include_suggestions: true
+      include_answer_stability: true
+
+  - name: "tool_reliability_auditor"
+    enabled: true
+    config:
+      top_k_tools: 15
+      include_examples: true
+      max_examples: 5
+
+  - name: "emerging_topics_detector"
+    enabled: true
+    config:
+      top_k_emerging: 10
+      min_cluster_size: 15
+      min_samples: 5
+
+  - name: "sentiment_analyzer"
+    enabled: true
+    config:
+      source: "query_text"
+      top_k_negative: 20
+      include_negative_clustering: true
+      min_cluster_size: 10
+      min_samples: 3
+
+  - name: "query_complexity_analyzer"
+    enabled: true
+    config:
+      model_id: "ilya-kolchinsky/PromptComplexityEstimator"
+      device: "cpu"
+      batch_size: 16
+      simple_max: 0.25
+      medium_max: 0.55
+      complex_max: 0.80
+      slm_candidate_pct: 0.95
+      frontier_pct: 0.10
+
+  - name: "tool_use_patterns"
+    enabled: true
+    config:
+      min_support: 0.03
+      max_itemset_size: 4
+      min_confidence: 0.5
+      min_lift: 1.2
+      max_ngram_n: 4
+      min_ngram_count: 5
+      top_k_itemsets: 25
+      top_k_rules: 25
+      top_k_ngrams: 25
